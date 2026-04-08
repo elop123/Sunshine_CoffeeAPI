@@ -1,23 +1,23 @@
 {
   "development": {
-    "username": "sql1234567",
-    "password": "vdWnqksTsP",
-    "database": "sql1234567",
-    "host": "sql.freesqldatabase.com",
+    "username": "root",
+    "password": "admin123",
+    "database": "sunshine",
+    "host": "localhost",
     "dialect": "mysql"
   },
   "test": {
-    "username": "sql1234567",
-    "password": "vdWnqksTsP",
-    "database": "sql1234567",
-    "host": "sql.freesqldatabase.com",
+    "username": "root",
+    "password": "admin123",
+    "database": "sunshine",
+    "host": "localhost",
     "dialect": "mysql"
   },
   "production": {
-    "username": "sql1234567",
-    "password": "vdWnqksTsP",
-    "database": "sql1234567",
-    "host": "sql.freesqldatabase.com",
+    "username": "root",
+    "password": "admin123",
+    "database": "sunshine",
+    "host": "localhost",
     "dialect": "mysql"
   }
 }
