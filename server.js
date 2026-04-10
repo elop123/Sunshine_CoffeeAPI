@@ -20,12 +20,16 @@ const db = require("./models");
 
 // Initialize Sequelize to fill DB with tables from models (Turn of force: true to not reset DB)
 db.sequelize
-  .sync({ force: false })
+  .authenticate()
+  .then(() => {
+    console.log("Database connection established.");
+    return db.sequelize.sync({ force: false });
+  })
   .then(() => {
     console.log("Synced db.");
   })
   .catch((err) => {
-    console.log("Failed to sync db: " + err.message);
+    console.error("Database startup error:", err);
   });
 
 // Welcome route
