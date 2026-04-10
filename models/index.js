@@ -8,14 +8,19 @@ const sequelize = new Sequelize(
   {
     host: dbConfig.HOST,
     dialect: "mysql",
-    logging: false,
-    pool: dbConfig.pool,
+    pool: {
+      max: dbConfig.pool.max,
+      min: dbConfig.pool.min,
+      acquire: dbConfig.pool.acquire,
+      idle: dbConfig.pool.idle,
+    },
     dialectOptions: {
       ssl: {
         require: true,
         rejectUnauthorized: true,
       },
     },
+    logging: false,
   }
 );
 
