@@ -7,7 +7,9 @@ const sequelize = new Sequelize(
   dbConfig.PASSWORD,
   {
     host: dbConfig.HOST,
+    port: dbConfig.PORT,
     dialect: "mysql",
+    logging: false,
     pool: {
       max: dbConfig.pool.max,
       min: dbConfig.pool.min,
@@ -16,11 +18,10 @@ const sequelize = new Sequelize(
     },
     dialectOptions: {
       ssl: {
-        require: true,
+        minVersion: "TLSv1.2",
         rejectUnauthorized: true,
       },
     },
-    logging: false,
   }
 );
 
@@ -28,8 +29,8 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.Product = require("../models/product.model.js")(sequelize, Sequelize);
-db.User = require("../models/user.model.js")(sequelize, Sequelize);
-db.AuthToken = require("../models/authToken.model.js")(sequelize, Sequelize);
+db.Product = require("./product.model.js")(sequelize, Sequelize);
+db.User = require("./user.model.js")(sequelize, Sequelize);
+db.AuthToken = require("./authToken.model.js")(sequelize, Sequelize);
 
 module.exports = db;
