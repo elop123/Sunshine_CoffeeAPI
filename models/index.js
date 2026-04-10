@@ -18,7 +18,8 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     require: true,
     rejectUnauthorized: true
   }
-}
+},
+  dialect: "mysql"
 });
 
 const db = {};
