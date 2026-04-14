@@ -1,21 +1,25 @@
-module.exports = (sequalize, Sequelize) => {
-  const AuthToken = sequalize.define("AuthToken", {
-    id: {
+module.exports = (sequelize, Sequelize) => {
+  const AuthToken = sequelize.define(
+    "AuthToken",
+    {
+      id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
       },
-    user: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-    },
-    token: {
-      type: Sequelize.STRING,
-    },
-    email: {
-      type: Sequelize.STRING,
-    },
+      user: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      token: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      email: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       expiryDate: {
         type: Sequelize.BIGINT,
         allowNull: false,
@@ -24,13 +28,10 @@ module.exports = (sequalize, Sequelize) => {
     {
       tableName: "authtokens",
       timestamps: true,
-    },                              
-    {
-      tableName: "authtokens",
-      timestamps: true,
       createdAt: "createdAt",
       updatedAt: "updatedAt",
     }
-  });
+  );
+
   return AuthToken;
 };
