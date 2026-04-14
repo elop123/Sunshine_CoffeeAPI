@@ -4,16 +4,18 @@ const db = require("../models");
 
 // Function to verify expiration on token
 exports.verifyExpiration = (token) => {
-  return token.expiryDate.getTime() < new Date().getTime();
+  return Number(token.expiryDate) < Date.now();
 };
 
 // Function to create a new JWT and refresh
 exports.createToken = async function (user) {
-  let expiredAt = new Date();
+  const expiredAt = new Date();
   expiredAt.setSeconds(
-    expiredAt.getSeconds() + process.env.JWT_REFRESH_EXPIRATION
+    expiredAt.getSeconds() + Number(process.env.JWT_REFRESH_EXPIRATION || 86400)
   );
-  let _token = uuidv4();
+
+  const _token = uuidv4();
+  
   let refreshToken = await db.AuthToken.create({
     token: _token,
     user: user.id,
