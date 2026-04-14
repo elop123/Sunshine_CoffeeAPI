@@ -7,11 +7,12 @@ const app = express();
 
 // Set origin for CORS
 const corsOptions = {
-  origin: "*",
-};
-
+  origin: ["https://sunshine-coffee.vercel.app"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: false,
+}
 // Set up app to use cors, json and urlEncoded body
-app.use(cors(corsOptions));
+app.use(cors(corsOptions))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
