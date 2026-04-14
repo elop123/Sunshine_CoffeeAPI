@@ -8,7 +8,6 @@ const {
   verifyExpiration,
 } = require("../controllers/authToken.controller");
 
-// Register user
 exports.registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -34,7 +33,6 @@ exports.registerUser = async (req, res) => {
   }
 };
 
-// Sign in
 exports.signInUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -48,7 +46,6 @@ exports.signInUser = async (req, res) => {
     }
 
     const passwordValid = await bcrypt.compare(password, USER.password);
-
     if (!passwordValid) {
       return res.status(401).json("Incorrect email or password");
     }
@@ -73,7 +70,6 @@ exports.signInUser = async (req, res) => {
   }
 };
 
-// Refresh token
 exports.refreshToken = async (req, res) => {
   const { refreshToken: requestToken } = req.body;
 
