@@ -1,6 +1,5 @@
 const db = require("../models");
 const User = db.User;
-const Order = db.Order;
 const Auth = db.AuthToken;
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -9,108 +8,116 @@ const {
   verifyExpiration,
 } = require("../controllers/authToken.controller");
 
-// Register user function
+// Register user
 exports.registerUser = async (req, res) => {
   try {
-    const { name, email, password, phone } = req.body;
-    // Check if user exists by email
+    const { name, email, password } = req.body;
+
     const userExists = await User.findOne({
       where: { email },
     });
+
     if (userExists) {
-      return res
-        .status(400)
-        .json("Email is already associated with an account");
+      return res.status(400).json("Email is already associated with an account");
     }
 
-    // Create new user and hash password
     await User.create({
       name,
       email,
-      password: await bcrypt.hash(password, 15),
+      password: await bcrypt.hash(password, 10),
     });
+
     return res.status(200).json("Registration successful");
   } catch (err) {
-    return res.status(500).json("Error in registering user" + err);
+    console.error("Register error:", err);
+    return res.status(500).json("Error in registering user: " + err.message);
   }
 };
 
-// Sign in function
+// Sign in
 exports.signInUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user by email
     const USER = await User.findOne({
       where: { email },
     });
+
     if (!USER) {
       return res.status(404).json("Email not found");
     }
 
-    // Verify password
     const passwordValid = await bcrypt.compare(password, USER.password);
+
     if (!passwordValid) {
-      return res.status(404).json("Incorrect email and password combination");
+      return res.status(401).json("Incorrect email or password");
     }
 
-    // Authenticate user with jwt
-    const token = jwt.sign({ id: USER.id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_REFRESH_EXPIRATION,
-    });
-    let refreshToken = await createToken(USER);
+    const token = jwt.sign(
+      { id: USER.id, email: USER.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-    // Send user back with name, email and tokens
-    res.status(200).send({
+    const refreshToken = await createToken(USER);
+
+    return res.status(200).json({
       id: USER.id,
       email: USER.email,
       accessToken: token,
       refreshToken,
     });
   } catch (err) {
-    return res.status(500).send("Sign in error: " + err);
+    console.error("Sign in error:", err);
+    return res.status(500).json("Sign in error: " + err.message);
   }
 };
 
-// Refresh Token function
+// Refresh token
 exports.refreshToken = async (req, res) => {
   const { refreshToken: requestToken } = req.body;
-  if (requestToken == null) {
-    return res.status(403).send("Refresh Token is required!");
+
+  if (!requestToken) {
+    return res.status(403).json("Refresh Token is required!");
   }
 
   try {
-    let refreshToken = await Auth.findOne({
+    const refreshToken = await Auth.findOne({
       where: { token: requestToken },
     });
+
     if (!refreshToken) {
-      res.status(403).send("Invalid refresh token");
-      return;
-    }
-    if (verifyExpiration(refreshToken)) {
-      Auth.destroy({ where: { id: refreshToken.id } });
-      res
-        .status(403)
-        .send("Refresh token was expired. Please make a new sign in request");
-      return;
+      return res.status(403).json("Invalid refresh token");
     }
 
-    const user = await db.User.findOne({
+    if (verifyExpiration(refreshToken)) {
+      await Auth.destroy({ where: { id: refreshToken.id } });
+      return res
+        .status(403)
+        .json("Refresh token was expired. Please make a new sign in request");
+    }
+
+    const user = await User.findOne({
       where: { id: refreshToken.user },
-      attributes: {
-        exclude: ["password"],
-      },
+      attributes: { exclude: ["password"] },
     });
-    let newAccessToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_REFRESH_EXPIRATION,
-    });
+
+    if (!user) {
+      return res.status(404).json("User not found");
+    }
+
+    const newAccessToken = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
     return res.status(200).json({
       accessToken: newAccessToken,
       refreshToken: refreshToken.token,
     });
   } catch (err) {
-    console.log("err", err);
-    return res.status(500).send("Internal server error");
+    console.error("Refresh token error:", err);
+    return res.status(500).json("Internal server error");
   }
 };
