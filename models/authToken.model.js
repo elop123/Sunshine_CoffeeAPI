@@ -10,6 +10,15 @@ module.exports = (sequalize, Sequelize) => {
     email: {
       type: Sequelize.STRING,
     },
+      expiryDate: {
+        type: Sequelize.BIGINT,
+        allowNull: false,
+      },
+    },
+    {
+      tableName: "authtokens",
+      timestamps: true,
+    }
   });
   return AuthToken;
 };
