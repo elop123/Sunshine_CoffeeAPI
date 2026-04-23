@@ -28,8 +28,8 @@ module.exports = (sequelize, Sequelize) => {
     {
       tableName: "authtokens",
       timestamps: true,
-      createdAt: "createdAt",
-      updatedAt: "updatedAt",
+      createdAt: "created_at",
+      updatedAt: "updated_at",
     }
   );
 
