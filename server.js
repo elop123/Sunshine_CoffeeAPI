@@ -24,7 +24,7 @@ db.sequelize
   .authenticate()
   .then(() => {
     console.log("Database connection established.");
-    return db.sequelize.sync({ force: false });
+    return db.sequelize.sync({ alter: true });
   })
   .then(() => {
     console.log("Synced db.");
