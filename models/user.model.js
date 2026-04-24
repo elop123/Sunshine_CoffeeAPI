@@ -30,7 +30,9 @@ module.exports = (sequalize, Sequelize) => {
      {
       tableName: "users",
       underscored: false,
-      timestamps: false
+      timestamps: false,
+      createdAt: "created_at",
+      updatedAt: "updated_at"
     }
   );
   return User;
